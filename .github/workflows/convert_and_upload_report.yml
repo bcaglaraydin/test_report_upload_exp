@@ -25,7 +25,7 @@ jobs:
           registry: docker.io
           image: 65edfd3b/test_report_upload:latest
           options: |
-            --mount type=bind,source=${{ github.workspace }}/test_report.xml,target=/app
+            --mount type=bind,source=${{ github.workspace }}/test_report.xml,target=/app/test_report.xml
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
             -e S3_PATH="qa"
