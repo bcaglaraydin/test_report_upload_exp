@@ -9,25 +9,26 @@ jobs:
   build-and-run-docker:
     runs-on: ubuntu-latest
 
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Upload test report as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: test_report
-          path: test_report.xml
+      # - name: Upload test report as artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: test_report
+      #     path: test_report.xml
 
       - name: Run Docker image for test upload and convert
         uses: addnab/docker-run-action@v3
         with:
           registry: docker.io
           image: 65edfd3b/test_report_upload:latest
+          options: |
+            -v ${{ github.workspace }}/test_report.xml:/app/test_report.xml
+            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            -e S3_PATH="qa"
+
           run: |
-            /bin/bash -c "cp ${{ github.workspace }}/test_report.xml /app/ && /app/convert_and_push.sh 1.0.0"
-        
+            /bin/bash -c "/app/convert_and_push.sh 1.0.0"
