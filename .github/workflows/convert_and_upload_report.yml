@@ -28,7 +28,7 @@ jobs:
             --mount type=bind,source=${{ github.workspace }}/test_report.xml,target=/app/test_report.xml
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            -e S3_PATH="qa"
+            -e S3_PATH=qa
             
           run: |
             /bin/bash -c "/app/convert_and_push.sh 1.0.0"
