@@ -32,6 +32,7 @@ jobs:
         with:
           name: test_report.xml
           path: ${{ github.workspace }}/${{ env.TEST_REPORT_FILE }}
+        if: always()
 
       - name: Run Docker image for test upload and convert
         uses: addnab/docker-run-action@v3
@@ -46,3 +47,4 @@ jobs:
 
           run: |
             /bin/bash -c "/app/convert_and_push.sh ${{ env.VERSION }}"
+        if: always()

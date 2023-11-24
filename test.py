@@ -7,4 +7,6 @@ def test_add_numbers():
     assert add_numbers(0, 0) == 0
     assert add_numbers(-5, -7) == -12
     assert add_numbers(2.5, 1.5) == 4.0
+
+def test_fail():
     assert add_numbers(2.3, 1.5) == 4.0
