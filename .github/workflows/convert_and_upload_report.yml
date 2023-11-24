@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: test_report.xml
-          path: ${TEST_REPORT_FILE}
+          path: ${{ github.workspace }}/${TEST_REPORT_FILE}
 
       - name: Run Docker image for test upload and convert
         uses: addnab/docker-run-action@v3
