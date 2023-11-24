@@ -25,13 +25,13 @@ jobs:
       - run: python -m pip install pytest
 
       - name: Test with pytest
-        run: python -m pytest --junitxml=${TEST_REPORT_FILE} test.py
+        run: python -m pytest --junitxml=$TEST_REPORT_FILE test.py
 
       - name: Upload test reports as artifact
         uses: actions/upload-artifact@v3
         with:
           name: test_report.xml
-          path: ${{ github.workspace }}/${TEST_REPORT_FILE}
+          path: ${{ github.workspace }}/$TEST_REPORT_FILE
 
       - name: Run Docker image for test upload and convert
         uses: addnab/docker-run-action@v3
@@ -39,10 +39,10 @@ jobs:
           registry: docker.io
           image: 65edfd3b/test_report_upload:latest
           options: |
-            --mount type=bind,source=${{ github.workspace }}/${TEST_REPORT_FILE},target=/app/${TEST_REPORT_FILE}
+            --mount type=bind,source=${{ github.workspace }}/$TEST_REPORT_FILE,target=/app/$TEST_REPORT_FILE
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
             -e S3_PATH=qa
 
           run: |
-            /bin/bash -c "/app/convert_and_push.sh ${VERSION}"
+            /bin/bash -c "/app/convert_and_push.sh $VERSION"
