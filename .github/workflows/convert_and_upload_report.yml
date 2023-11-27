@@ -44,6 +44,4 @@ jobs:
         with:
           s3-bucket-base-path: ${{ env.S3_BUCKET }}
           s3-path:  ${{ env.S3_PATH }}
-          version: ${{ env.VERSION }}
-          test-report-filename: ${{ env.TEST_REPORT_FILE }}
         if: always()
