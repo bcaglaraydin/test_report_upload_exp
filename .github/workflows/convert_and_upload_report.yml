@@ -14,6 +14,8 @@ jobs:
       VERSION: ${{ github.ref_name }}
       S3_BUCKET: s3://empatica-test-reports-data
       S3_PATH: qa
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     steps:
       - name: Checkout repository
@@ -36,17 +38,10 @@ jobs:
           path: ${{ github.workspace }}/${{ env.TEST_REPORT_FILE }}
         if: always()
 
-      - name: Run Docker image for test upload and convert
-        uses: addnab/docker-run-action@v3
+      - name: Convert and Push Test Report to S3
+        uses: bcaglaraydin/s3_test_report_repo_maker@v1
         with:
-          registry: docker.io
-          image: 65edfd3b/test_report_upload:latest
-          options: |
-            --mount type=bind,source=${{ github.workspace }}/${{ env.TEST_REPORT_FILE }},target=/app/${{ env.TEST_REPORT_FILE }}
-            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            -e AWS_DEFAULT_REGION=us-east-1
-
-          run: |
-            /bin/bash -c "/app/convert_and_push.sh ${{ env.S3_BUCKET }} ${{ env.S3_PATH }} ${{ env.VERSION }} ${{ env.TEST_REPORT_FILE }}"
-        if: always()
+          s3-bucket-base-path: ${{ env.S3_BUCKET }}
+          s3-path:  ${{ env.S3_PATH }}
+          version: ${{ env.VERSION }}
+          test-report-filename: ${{ env.TEST_REPORT_FILE }}
