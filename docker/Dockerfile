@@ -9,9 +9,6 @@ RUN apt-get update && \
 # Install junit2html
 RUN pip install junit2html
 
-# Set default region for test buckets
-ENV AWS_DEFAULT_REGION=us-east-1
-
 # Set the working directory to /app
 WORKDIR /app
 
