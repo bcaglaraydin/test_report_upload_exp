@@ -39,7 +39,7 @@ jobs:
         if: always()
 
       - name: Convert and Push Test Report to S3
-        uses: bcaglaraydin/s3_test_report_repo_maker
+        uses: bcaglaraydin/s3_test_report_repo_maker@main
         with:
           s3-bucket-base-path: ${{ env.S3_BUCKET }}
           s3-path:  ${{ env.S3_PATH }}
