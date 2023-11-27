@@ -45,3 +45,4 @@ jobs:
           s3-path:  ${{ env.S3_PATH }}
           version: ${{ env.VERSION }}
           test-report-filename: ${{ env.TEST_REPORT_FILE }}
+        if: always()
