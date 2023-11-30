@@ -32,12 +32,6 @@ jobs:
       - name: Test with pytest
         run: python -m pytest --junitxml=${{ env.TEST_REPORT_FILE }} test.py
 
-      - name: Upload test reports as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.TEST_REPORT_FILE }}
-          path: ${{ github.workspace }}/${{ env.TEST_REPORT_FILE }}
-        if: always()
 
       - name: Convert and Push Test Report to S3
         uses: bcaglaraydin/s3_test_report_repo_maker@v2
