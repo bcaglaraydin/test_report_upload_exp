@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      TEST_REPORT_FILE: test_report.xml
+      TEST_REPORT_FILE: report/test_report.xml
       VERSION: ${{ github.ref_name }}
       S3_BUCKET: s3://empatica-test-reports-data
       S3_PATH: qa
@@ -44,4 +44,5 @@ jobs:
         with:
           s3-bucket-base-path: ${{ env.S3_BUCKET }}
           s3-path:  ${{ env.S3_PATH }}
+          test-report-filename: ${{ env.TEST_REPORT_FILE }}
         if: always()
