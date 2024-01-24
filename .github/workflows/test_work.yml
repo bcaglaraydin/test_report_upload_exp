@@ -32,8 +32,7 @@ jobs:
           echo "GitHub Ref: ${{ github.ref }}"
           echo "Is Push Event: ${{ github.event_name == 'push' }}"
           echo "Starts with refs/heads/release/: ${{ startsWith(github.ref, 'refs/heads/release/') }}"
-          echo "Combined Condition: ${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/')) == 'true' }}"
-          echo "Final Condition: ${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/')) == 'true'}}"
+          echo "Combined Condition: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/')}}"
       - name: Convert and Push ${{matrix.services}} Test Report to
         uses: bcaglaraydin/s3_test_report_repo_maker@main
         env:
