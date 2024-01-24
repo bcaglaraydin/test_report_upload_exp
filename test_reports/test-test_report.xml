@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+    <testsuite name="pytest" errors="0" failures="1" skipped="0" tests="2" time="0.103"
+        timestamp="2023-12-01T15:06:19.124248" hostname="MacBook-Pro-di-Berdan.local">
+        <testcase classname="test" name="test_add_numbers" time="0.010" />
+        <testcase classname="test" name="test_fail" time="0.011">
+            <failure message="assert 3.8 == 4.0&#10; +  where 3.8 = add_numbers(2.3, 1.5)">def
+                test_fail():
+                &gt; assert add_numbers(2.3, 1.5) == 4.0
+                E assert 3.8 == 4.0
+                E + where 3.8 = add_numbers(2.3, 1.5)
+
+                test.py:12: AssertionError</failure>
+        </testcase>
+    </testsuite>
+</testsuites>

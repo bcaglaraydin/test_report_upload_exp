@@ -1,0 +1,42 @@
+######################################################################################################################
+# This workflow runs unit tests stored in the repository
+######################################################################################################################
+name: run-unit-tests
+on:
+  pull_request:
+    types:
+      - opened
+      - ready_for_review
+      - synchronize
+      - labeled
+  push:
+    branches:
+      - main
+      - release/*
+    paths-ignore:
+      - '.github/**'
+
+jobs:
+  run-unit-tests:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: ${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/')) == 'true' }}
+      matrix:
+        services:
+          - 'test'
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Convert and Push ${{matrix.services}} Test Report to S3
+        uses: bcaglaraydin/s3_test_report_repo_maker@main
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+        with:
+          s3-bucket-base-path: s3://empatica-test-reports-data
+          s3-path: qa/test
+          test-report-filename: $GITHUB_WORKSPACE/test_reports/${{matrix.services}}_test_report.xml
+          version: ${GITHUB_REF#refs/heads/release/}
+        if: ${{(github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/')) == 'true' && (failure() || success())}}
