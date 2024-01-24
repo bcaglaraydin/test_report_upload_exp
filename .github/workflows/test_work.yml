@@ -44,5 +44,5 @@ jobs:
           s3-bucket-base-path: s3://empatica-test-reports-data
           s3-path: qa/test
           test-report-filename: ./test_reports/${{matrix.services}}-test_report.xml
-          version: ${GITHUB_REF#refs/heads/release/}
+          version: $GITHUB_REF#refs/heads/release/
         if: ${{github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/') && (failure() || success())}}
