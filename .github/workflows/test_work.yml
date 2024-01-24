@@ -44,4 +44,4 @@ jobs:
           s3-path: qa/test
           test-report-filename: $GITHUB_WORKSPACE/test_reports/${{matrix.services}}_test_report.xml
           version: ${GITHUB_REF#refs/heads/release/}
-        if: ${{(github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/')) == 'true' && (failure() || success())}}
+        if: ${{github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/') && (failure() || success())}}
