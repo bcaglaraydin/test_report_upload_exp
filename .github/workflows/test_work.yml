@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v3
       - name: test step
         run: echo ${GITHUB_REF#refs/heads/release/}
-      - name: Convert and Push ${{matrix.services}} Test Report to S3
+      - name: Convert and Push ${{matrix.services}} Test Report to
         uses: bcaglaraydin/s3_test_report_repo_maker@main
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
