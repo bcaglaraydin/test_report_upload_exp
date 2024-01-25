@@ -12,23 +12,47 @@ on:
   push:
     branches:
       - main
-      - release/**
+      - release/*
 
 jobs:
+  init:
+    runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.variables.outputs.VERSION }}
+      is_release_push: ${{ steps.variables.outputs.IS_RELEASE_PUSH }}
+    steps:
+      - name: Init
+        id: variables
+        run: |
+          echo "Executing unit tests"
+          echo "Setting custom variables"
+          echo "VERSION=${GITHUB_REF#refs/heads/release/}" >> $GITHUB_OUTPUT
+          echo "IS_RELEASE_PUSH=${{ github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/') }}" >> $GITHUB_OUTPUT
+        shell: bash
   run-unit-tests:
+    needs:
+        - init
     runs-on: ubuntu-22.04
     strategy:
-      fail-fast: ${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/')) == 'true' }}
+      fail-fast: ${{ needs.init.outputs.is_release_push == 'false' }}
       matrix:
         services:
-          - 'test'
+          - "fail"
+          - "test"
     timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: test step
-        run: "running test setp"
-      - name: Convert and Push ${{matrix.services}} Test Report to S3
+      - name: Debug boolean conditions
+        run: |
+          echo "GitHub Event Name: ${{ github.event_name }}"
+          echo "GitHub Ref: ${{ github.ref }}"
+          echo "Is Push Event: ${{ github.event_name == 'push' }}"
+          echo "Starts with refs/heads/release/: ${{ startsWith(github.ref, 'refs/heads/release/') }}"
+          echo "Combined Condition: ${{ needs.init.outputs.is_release_push == 'true'}}"
+          echo "$GITHUB_WORKSPACE/test_reports/${{matrix.services}}-test_report.xml"
+          echo "Version: ${{ needs.init.outputs.VERSION }}"
+      - name: Convert and Push ${{matrix.services}} Test Report to
         uses: bcaglaraydin/s3_test_report_repo_maker@main
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -37,6 +61,6 @@ jobs:
         with:
           s3-bucket-base-path: s3://empatica-test-reports-data
           s3-path: qa/test
-          test-report-filename: $GITHUB_WORKSPACE/test_reports/${{matrix.services}}_test_report.xml
-          version: ${GITHUB_REF#refs/heads/release/}
-        if: ${{(github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/')) == 'true' && (failure() || success())}}
+          test-report-filename: ./test_reports/${{matrix.services}}-test_report.xml
+          version: ${{ needs.init.outputs.version }}
+        if: ${{needs.init.outputs.is_release_push == 'true' && (failure() || success())}}
