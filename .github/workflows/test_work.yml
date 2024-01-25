@@ -51,6 +51,7 @@ jobs:
           echo "Starts with refs/heads/release/: ${{ startsWith(github.ref, 'refs/heads/release/') }}"
           echo "Combined Condition: ${{ needs.init.outputs.is_release_push == 'true'}}"
           echo "Version: ${{ needs.init.outputs.VERSION }}"
+          echo "Fail fast: ${{ needs.init.outputs.is_release_push == 'false' }}"
       - name: Try to fail
         run: exit 1
         if: ${{matrix.services == 'fail'}}
