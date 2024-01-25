@@ -50,8 +50,10 @@ jobs:
           echo "Is Push Event: ${{ github.event_name == 'push' }}"
           echo "Starts with refs/heads/release/: ${{ startsWith(github.ref, 'refs/heads/release/') }}"
           echo "Combined Condition: ${{ needs.init.outputs.is_release_push == 'true'}}"
-          echo "$GITHUB_WORKSPACE/test_reports/${{matrix.services}}-test_report.xml"
           echo "Version: ${{ needs.init.outputs.VERSION }}"
+      - name: Try to fail
+        run: exit 1
+        if: ${{matrix.services == 'fail'}}
       - name: Convert and Push ${{matrix.services}} Test Report to
         uses: bcaglaraydin/s3_test_report_repo_maker@main
         env:
