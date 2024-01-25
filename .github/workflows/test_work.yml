@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       version: ${{ steps.variables.outputs.VERSION }}
+      is_release_push: ${{ steps.variables.outputs.IS_RELEASE_PUSH }}
     steps:
       - name: Init
         id: variables
@@ -26,13 +27,14 @@ jobs:
           echo "Executing unit tests"
           echo "Setting custom variables"
           echo "VERSION=${GITHUB_REF#refs/heads/release/}" >> $GITHUB_OUTPUT
+          echo "IS_RELEASE_PUSH=${{ github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/') }}" >> $GITHUB_OUTPUT
         shell: bash
   run-unit-tests:
     needs:
         - init
     runs-on: ubuntu-22.04
     strategy:
-      fail-fast: ${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/')) == 'true' }}
+      fail-fast: ${{ needs.init.outputs.is_release_push == 'true' }}
       matrix:
         services:
           - "test"
@@ -46,7 +48,7 @@ jobs:
           echo "GitHub Ref: ${{ github.ref }}"
           echo "Is Push Event: ${{ github.event_name == 'push' }}"
           echo "Starts with refs/heads/release/: ${{ startsWith(github.ref, 'refs/heads/release/') }}"
-          echo "Combined Condition: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/')}}"
+          echo "Combined Condition: ${{ needs.init.outputs.is_release_push == 'true'}}"
           echo "$GITHUB_WORKSPACE/test_reports/${{matrix.services}}-test_report.xml"
           echo "Version: ${{ needs.init.outputs.VERSION }}"
       - name: Convert and Push ${{matrix.services}} Test Report to
@@ -60,4 +62,4 @@ jobs:
           s3-path: qa/test
           test-report-filename: ./test_reports/${{matrix.services}}-test_report.xml
           version: ${{ needs.init.outputs.VERSION }}
-        if: ${{github.event_name == 'push' && startsWith(github.ref, 'refs/heads/release/') && (failure() || success())}}
+        if: ${{needs.init.outputs.is_release_push == 'true' && (failure() || success())}}
