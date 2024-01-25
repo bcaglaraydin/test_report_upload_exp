@@ -25,7 +25,7 @@ jobs:
         run: |
           echo "Executing unit tests"
           echo "Setting custom variables"
-          echo "VERSION=$GITHUB_REF#refs/heads/release/" >> $GITHUB_OUTPUT
+          echo "VERSION=${GITHUB_REF#refs/heads/release/}" >> $GITHUB_OUTPUT
         shell: bash
   run-unit-tests:
     needs:
