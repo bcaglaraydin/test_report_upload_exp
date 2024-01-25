@@ -37,6 +37,7 @@ jobs:
       fail-fast: ${{ needs.init.outputs.is_release_push == 'true' }}
       matrix:
         services:
+          - "fail"
           - "test"
     timeout-minutes: 10
     steps:
